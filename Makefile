@@ -5,30 +5,30 @@ morfologik = morfologik-tools-1.6.0-standalone.jar
 all: polimorfologik.txt polish.dict polish_synth.dict polish_tags.txt
 
 #po³±czenie
-polimorfologik.txt: eksport.tab brev-morfologik.txt
-	sort -u eksport.tab brev-morfologik.txt | gawk -f join_tags.awk > polimorfologik.txt
+#polimorfologik.txt: eksport.tab brev-morfologik.txt
+#	sort -u eksport.tab brev-morfologik.txt | gawk -f join_tags.awk > polimorfologik.txt
 
 pol.txt: polimorfologik.txt
 	java -jar $(morfologik) tab2morph -inf -i polimorfologik.txt -o pol.txt
 
 polish.dict: pol.txt	
-	java -jar -Xmx700m $(morfologik) fsa_build -i pol.txt -f fsa5 -o polish.dict
+	java -jar -Xmx2048m $(morfologik) fsa_build -i pol.txt -f fsa5 -o polish.dict
 
-polish_tags.txt: polimorfologik.txt eksport.tab format_tags.awk
-	gawk -f tags.awk polimorfologik.txt | gawk -f format_tags.awk | sort -u > polish_tags.txt
+#polish_tags.txt: polimorfologik.txt eksport.tab format_tags.awk
+#	gawk -f tags.awk polimorfologik.txt | gawk -f format_tags.awk | sort -u > polish_tags.txt
 
 synt_in.txt: polimorfologik.txt
 	gawk -f synteza_pl.awk polimorfologik.txt > synt.txt
 	java -jar $(morfologik) tab2morph -nw -i synt.txt -o synt_in.txt 2> /dev/null
 	
 polish_synth.dict: polimorfologik.txt synt_in.txt 
-	java -jar -Xmx700m $(morfologik) fsa_build -i synt_in.txt -f fsa5 -o polish_synth.dict 
+	java -jar -Xmx2048m $(morfologik) fsa_build -i synt_in.txt -f fsa5 -o polish_synth.dict 
 
 pl.dict: pol.txt
-	java -jar -Xmx700m $(morfologik) fsa_build -i pol.txt -f cfsa2 -o pl.dict
+	java -jar -Xmx2048m $(morfologik) fsa_build -i pol.txt -f cfsa2 -o pl.dict
 
 pl_synt_cfsa2: polimorfologik.txt synt_in.txt 
-	java -jar -Xmx700m $(morfologik) fsa_build -i synt_in.txt -f cfsa2 -o polish_synth.dict 
+	java -jar -Xmx2048m $(morfologik) fsa_build -i synt_in.txt -f cfsa2 -o polish_synth.dict 
 	
 pl.info: polish.info
 	cp polish.info pl.info
